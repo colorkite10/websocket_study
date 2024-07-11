@@ -14,14 +14,12 @@ const handleListen = () => console.log(`Listening on http://localhost:3000`);
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-//http 서버 위에 webSocket 서버를 만들 수 있도록 한 것
-// => http 서버와 wss 서버 모두 지원 가능하게 함
 
-function handleConnection(bSocket) {
-  //bSocket: 연결된 브라우저
-  console.log(bSocket);
-}
-
-wss.on("connection", handleConnection);
+wss.on("connection", (socket) => {
+  console.log("Connected to Browser");
+  socket.on("close", () => console.log("Disconnected form the browser"));
+  socket.on("message", (message) => console.log(message.toString()));
+  socket.send("hello!!!!");
+});
 
 server.listen(3000, handleListen);
