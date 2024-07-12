@@ -1,8 +1,13 @@
+const messageList = document.querySelector("ul");
+const messageForm = document.querySelector("form");
+
 const fSocket = new WebSocket(`ws://${window.location.host}`);
 
-fSocket.addEventListener("open", () => {
+function handleOpen() {
   console.log("Connected to Server");
-});
+}
+
+fSocket.addEventListener("open", handleOpen);
 
 fSocket.addEventListener("message", (message) => {
   console.log("New message: ", message.data);
@@ -12,6 +17,12 @@ fSocket.addEventListener("close", () => {
   console.log("Disconnected from server");
 });
 
-setTimeout(() => {
-  fSocket.send("hello from the browser!");
-}, 10000);
+function handleSubmit(event) {
+  event.preventDefault();
+  const input = messageForm.querySelector("input");
+  fSocket.send(input.value);
+  console.log(input.value);
+  input.value = "";
+}
+
+messageForm.addEventListener("submit", handleSubmit);
