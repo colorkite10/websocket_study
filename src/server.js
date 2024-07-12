@@ -1,5 +1,6 @@
 import http from "http";
-import WebSocket from "ws";
+// import WebSocket from "ws";
+import SocketIO from "socket.io";
 import express from "express";
 
 const app = express();
@@ -12,34 +13,35 @@ app.get("/*", (_, res) => res.redirect("/"));
 
 const handleListen = () => console.log(`Listening on http://localhost:3000`);
 
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const httpServer = http.createServer(app);
+const wsServer = SocketIO(httpServer);
 
-function onSocketClose() {
-  console.log("Disconnected form the browser");
-}
-
-const sockets = [];
-
-wss.on("connection", (socket) => {
-  sockets.push(socket);
-  socket["nickname"] = "Anon"; //socket은 객체이므로 요소를 추가해도 됨
-  console.log("Connected to Browser");
-  socket.on("close", onSocketClose);
-  socket.on("message", (message) => {
-    message = message.toString();
-    const parsedMessage = JSON.parse(message);
-    switch (parsedMessage.type) {
-      case "new_message":
-        sockets.forEach((aSocket) =>
-          aSocket.send(`${socket.nickname}: ${parsedMessage.payload}`)
-        );
-        break;
-      case "nickname":
-        socket["nickname"] = parsedMessage.payload;
-        break;
-    }
-  });
+wsServer.on("connection", (socket) => {
+  console.log(socket);
 });
 
-server.listen(3000, handleListen);
+// const wss = new WebSocket.Server({ server });
+
+// const sockets = [];
+// wss.on("connection", (socket) => {
+//   sockets.push(socket);
+//   socket["nickname"] = "Anon"; //socket은 객체이므로 요소를 추가해도 됨
+//   console.log("Connected to Browser");
+//   socket.on("close", onSocketClose);
+//   socket.on("message", (message) => {
+//     message = message.toString();
+//     const parsedMessage = JSON.parse(message);
+//     switch (parsedMessage.type) {
+//       case "new_message":
+//         sockets.forEach((aSocket) =>
+//           aSocket.send(`${socket.nickname}: ${parsedMessage.payload}`)
+//         );
+//         break;
+//       case "nickname":
+//         socket["nickname"] = parsedMessage.payload;
+//         break;
+//     }
+//   });
+// });
+
+httpServer.listen(3000, handleListen);
