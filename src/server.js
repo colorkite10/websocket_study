@@ -17,14 +17,12 @@ const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
-  console.log(socket.id);
   socket.onAny((event) => {
     console.log(`Socket Event: ${event}`); // Socket Event: enter_room
   });
-  socket.on("enter_room", (roomName, done) => {
-    console.log(socket.rooms); //Set(1) { 'Ef6uVaxnZoKCcTAzAAAD' }
+  socket.on("enter_room", (roomName, showRoom) => {
     socket.join(roomName);
-    console.log(socket.rooms); //Set(2) { 'Ef6uVaxnZoKCcTAzAAAD', '1212' }
+    showRoom();
   });
 });
 
