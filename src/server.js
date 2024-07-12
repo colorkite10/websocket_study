@@ -18,11 +18,12 @@ const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
   socket.onAny((event) => {
-    console.log(`Socket Event: ${event}`); // Socket Event: enter_room
+    console.log(`Socket Event: ${event}`);
   });
   socket.on("enter_room", (roomName, showRoom) => {
     socket.join(roomName);
     showRoom();
+    socket.to(roomName).emit("welcome"); //welcome event를 roomName에 있는 모든 사람들에게 emit
   });
 });
 
