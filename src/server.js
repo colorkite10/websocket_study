@@ -20,7 +20,7 @@ wsServer.on("connection", (socket) => {
   socket.on("enter_room", (msg, done) => {
     console.log(msg);
     setTimeout(() => {
-      done(); //backend에서 호출하고 frontend에서 실행됨!
+      done("hello from the backend"); //backend에서 호출하고 frontend에서 실행됨!
     }, 15000);
   });
 });
