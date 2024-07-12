@@ -19,18 +19,26 @@ function onSocketClose() {
   console.log("Disconnected form the browser");
 }
 
-//연결된 socket(브라우저)들을 저장하는 배열, 다른 브라우저끼리 통신 주고받을 수 있도록!
 const sockets = [];
 
-//event listening이랑 비슷함
 wss.on("connection", (socket) => {
   sockets.push(socket);
+  socket["nickname"] = "Anon"; //socket은 객체이므로 요소를 추가해도 됨
   console.log("Connected to Browser");
   socket.on("close", onSocketClose);
   socket.on("message", (message) => {
-    //연결된 브라우저에게 message를 보냄. 다른 브라우저에서 보낸 메시지도!
-    sockets.forEach((aSocket) => aSocket.send(message));
-    socket.send(message.toString());
+    message = message.toString();
+    const parsedMessage = JSON.parse(message);
+    switch (parsedMessage.type) {
+      case "new_message":
+        sockets.forEach((aSocket) =>
+          aSocket.send(`${socket.nickname}: ${parsedMessage.payload}`)
+        );
+        break;
+      case "nickname":
+        socket["nickname"] = parsedMessage.payload;
+        break;
+    }
   });
 });
 
