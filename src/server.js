@@ -23,7 +23,10 @@ wsServer.on("connection", (socket) => {
   socket.on("enter_room", (roomName, showRoom) => {
     socket.join(roomName);
     showRoom();
-    socket.to(roomName).emit("welcome"); //welcome event를 roomName에 있는 모든 사람들에게 emit
+    socket.to(roomName).emit("welcome");
+  });
+  socket.on("disconnecting", () => {
+    socket.rooms.forEach((room) => socket.to(room).emit("bye"));
   });
 });
 
