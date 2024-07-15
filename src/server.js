@@ -74,4 +74,5 @@ wsServer.on("connection", (socket) => {
   socket.on("nickname", (nickname) => (socket["nickname"] = nickname));
 });
 
+const handleListen = () => console.log(`Listening on http://localhost:3000`);
 httpServer.listen(3000, handleListen);
